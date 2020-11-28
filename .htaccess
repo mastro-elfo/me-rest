@@ -1,0 +1,20 @@
+RewriteEngine On
+
+# Service Unavailable
+# RewriteRule ^.*$ - [R=503]
+
+# Hide .ini files
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteCond %{REQUEST_URI} \.ini$
+RewriteRule ^ - [R=404]
+
+# API
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_URI} ^/api
+RewriteRule ^ index.php [QSA,L]
+
+# APP
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.html [QSA,L]
