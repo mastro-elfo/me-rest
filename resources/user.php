@@ -33,6 +33,32 @@ function is_super() {
   return is_logged() && $_SESSION["user"]["type"] == "super";
 }
 
+Flight::route("POST /api/user/check", function(){
+  $model = new User();
+  $request = Flight::request();
+
+  $username = $request->data->username;
+  $email = $request->data->email;
+
+  $data = $model->select([
+    "or" => [
+      "username" => $username,
+      "email" => $email
+    ]
+  ]);
+
+  Flight::json([
+    // `true` if ok, `false` otherwise
+    "username" => !array_any($data, function($item) use($username) {
+      return $item["username"] == $username;
+    }),
+    // `true` if ok, `false` otherwise
+    "email" => !array_any($data, function($item) use($email) {
+      return $item["email"] == $email;
+    }),
+  ]);
+});
+
 // Create new user
 Flight::route("POST /api/user/create", function(){
   // To create a new user I need a user is connected and is admin
