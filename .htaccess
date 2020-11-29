@@ -8,6 +8,11 @@ RewriteCond %{REQUEST_FILENAME} -f
 RewriteCond %{REQUEST_URI} \.ini$
 RewriteRule ^ - [R=404]
 
+# Hide .db files
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteCond %{REQUEST_URI} \.db$
+RewriteRule ^ - [R=404]
+
 # API
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
