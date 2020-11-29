@@ -5,9 +5,12 @@ use Medoo\Medoo;
 
 class Model {
   public function __construct($table, $columns, $options = []) {
-    global $config;
-    
-    $this->db = new Medoo($config["Medoo"]);
+    $config = get_config("Medoo", [
+      "database_type" => "sqlite",
+      "database_file" => "database.db"
+    ]);
+
+    $this->db = new Medoo($config);
     $this->table = $table;
     $this->db->create($table, $columns, $options);
   }

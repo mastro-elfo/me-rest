@@ -86,7 +86,7 @@ Flight::route("GET /api/users", function(){
 
   $list = $model->select($request->query->getData());
   $list = array_map(function($item){
-    return filter_keys($item, ["password", "picture"]);
+    return denied_keys($item, ["password", "picture"]);
   }, $list);
   Flight::json($list);
 });
@@ -110,7 +110,7 @@ Flight::route("GET /api/user/@id", function($id){
     return Flight::stop(NOT_FOUND);
   }
 
-  $data = filter_keys($data, ["password", "picture"]);
+  $data = denied_keys($data, ["password", "picture"]);
   Flight::json($data);
 });
 
@@ -154,15 +154,22 @@ Flight::route("PUT /api/user/@id", function($id){
 
   if($id == $_SESSION["user"]["id"]) {
     // Can't change type
-    $data = filter_keys($data, ["type"]);
+    $data = denied_keys($data, ["type"]);
   }
 
-  $ret = $model->update($id, $data);
-  // TODO: Should update session
-  Flight::json([
-    "response" => $ret
-  ]);
+  if(count($data) > 0) {
+    $ret = $model->update($id, $data);
+    // TODO: Should update session
+    Flight::json([
+      "response" => $ret
+    ]);
+  } else {
+    // `update` Gives error if `count($data) == 0`
+    Flight::json(["response" => 0]);
+  }
 });
+
+// TODO: update user picture
 
 Flight::route("DELETE /api/user/@id", function(){
   if(!is_logged()) {
@@ -201,7 +208,7 @@ Flight::route("POST /api/user/login", function(){
     return Flight::stop(NOT_FOUND);
   }
 
-  $data = filter_keys($data[0], ["password", "picture"]);
+  $data = denied_keys($data[0], ["password", "picture"]);
   // Set session data
   $_SESSION["user"] = $data;
   Flight::json($data);

@@ -1,6 +1,13 @@
 <?php
 
 // Adds Access-Control-Allow-Origin to response
-Flight::response()->header("Access-Control-Allow-Origin", "*");
+
+$AccessControlAllowOrigin =
+  array_key_exists("AccessControlAllowOrigin", $config)
+  ? $config["AccessControlAllowOrigin"] : "*";
+Flight::response()->header(
+  "Access-Control-Allow-Origin",
+  $AccessControlAllowOrigin
+);
 
 ?>

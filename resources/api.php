@@ -2,7 +2,14 @@
 
 // Returns all the routes
 Flight::route("/api", function(){
-  Flight::json(Flight::router()->getRoutes());
+  $expose = get_config("api", true);
+  if($expose) {
+    // Expose api
+    $routes = Flight::router()->getRoutes();
+  } else {
+    $routes = [];
+  }
+  Flight::json($routes);
 });
 
 ?>
