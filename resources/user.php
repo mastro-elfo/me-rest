@@ -59,7 +59,7 @@ Flight::route("POST /api/user/create", function(){
   ]);
 
   if(!$id) {
-    // Probably username or password duplicate
+    // Probably username or email duplicate
     return Flight::stop(BAD_REQUEST);
   }
 
