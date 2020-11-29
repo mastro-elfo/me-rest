@@ -54,4 +54,24 @@ function apply_maps($array, $keys) {
   return $mapped;
 }
 
+// @see: https://stackoverflow.com/a/39877269
+function array_any(array $array, callable $fn) {
+    foreach ($array as $value) {
+        if($fn($value)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+// @see: https://stackoverflow.com/a/39877269
+function array_every(array $array, callable $fn) {
+    foreach ($array as $value) {
+        if(!$fn($value)) {
+            return false;
+        }
+    }
+    return true;
+}
+
 ?>
