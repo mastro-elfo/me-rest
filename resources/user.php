@@ -74,6 +74,7 @@ Flight::route("POST /api/user/create", function(){
   $name = $request->data->name;
   $surname = $request->data->surname;
   $email = $request->data->email;
+  $picture = $request->data->picture;
 
   $id = $model->create([
     "username" => $username,
@@ -81,7 +82,8 @@ Flight::route("POST /api/user/create", function(){
     "type" => "user",
     "name" => $name,
     "surname" => $surname,
-    "email" => $email
+    "email" => $email,
+    "picture" => $picture
   ]);
 
   if(!$id) {
@@ -112,7 +114,7 @@ Flight::route("GET /api/users", function(){
 
   $list = $model->select($request->query->getData());
   $list = array_map(function($item){
-    return denied_keys($item, ["password", "picture"]);
+    return denied_keys($item, ["password"]);
   }, $list);
   Flight::json($list);
 });
@@ -136,31 +138,8 @@ Flight::route("GET /api/user/@id", function($id){
     return Flight::stop(NOT_FOUND);
   }
 
-  $data = denied_keys($data, ["password", "picture"]);
+  $data = denied_keys($data, ["password"]);
   Flight::json($data);
-});
-
-// Get user picture
-Flight::route("GET /api/user/@id/picture", function($id){
-  if(!is_logged()) {
-    return Flight::stop(UNAUTHORIZED);
-  }
-
-  if($id != $_SESSION["user"]["id"] && !is_admin()) {
-    return Flight::stop(UNAUTHORIZED);
-  }
-
-  $model = new User();
-
-  $data = $model->read($id);
-
-  if(!$data) {
-    // Not found
-    return Flight::stop(NOT_FOUND);
-  }
-
-  Flight::response()->header("Content-Type", "image/*");
-  echo $data["picture"];
 });
 
 // Update user data
@@ -185,7 +164,9 @@ Flight::route("PUT /api/user/@id", function($id){
 
   if(count($data) > 0) {
     $ret = $model->update($id, $data);
-    // TODO: Should update session
+    $data = $model->read($id);
+    $data = denied_keys($data, ["password"]);
+    $_SESSION["user"] = $data;
     Flight::json([
       "response" => $ret
     ]);
@@ -194,8 +175,6 @@ Flight::route("PUT /api/user/@id", function($id){
     Flight::json(["response" => 0]);
   }
 });
-
-// TODO: update user picture
 
 Flight::route("DELETE /api/user/@id", function(){
   if(!is_logged()) {
@@ -234,9 +213,10 @@ Flight::route("POST /api/user/login", function(){
     return Flight::stop(NOT_FOUND);
   }
 
-  $data = denied_keys($data[0], ["password", "picture"]);
+  $data = denied_keys($data[0], ["password"]);
   // Set session data
   $_SESSION["user"] = $data;
+  // file_put_contents('login', json_encode($data));
   Flight::json($data);
 });
 
