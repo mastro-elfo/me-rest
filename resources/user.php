@@ -60,7 +60,7 @@ Flight::route("POST /api/user/check", function(){
 });
 
 // Create new user
-Flight::route("POST /api/user/create", function(){
+Flight::route("POST /api/user", function(){
   // To create a new user I need a user is connected and is admin
   if(!is_admin()) {
     return Flight::stop(UNAUTHORIZED);
@@ -197,6 +197,7 @@ Flight::route("DELETE /api/user/@id", function(){
 
 // Log user in
 Flight::route("POST /api/user/login", function(){
+  // file_put_contents("user", "login");
   $model = new User();
   $request = Flight::request();
 
