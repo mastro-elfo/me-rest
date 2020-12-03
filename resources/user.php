@@ -111,8 +111,26 @@ Flight::route("GET /api/users", function(){
 
   $model = new User();
   $request = Flight::request();
+  $query = $request->query->getData();
+  // file_put_contents('users', json_encode($query));
 
-  $list = $model->select($request->query->getData());
+  $where = [];
+  if(array_key_exists("query", $query)) {
+    $where["OR"] = [
+      "username[~]" => $query["query"],
+      "name[~]" => $query["query"],
+      "surname[~]" => $query["query"],
+      "email[~]" => $query["query"]
+    ];
+  }
+  if(array_key_exists("start", $query) && array_key_exists("count", $query)) {
+    $where["LIMIT"] = [$query["start"], $query["count"]];
+  } else if (array_key_exists("count", $query)) {
+    $where["LIMIT"] = $query["count"];
+  }
+  // file_put_contents('users', json_encode($where));
+  $list = $model->select($where);
+  // file_put_contents('users', count($list));
   $list = array_map(function($item){
     return denied_keys($item, ["password"]);
   }, $list);
