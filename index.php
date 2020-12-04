@@ -17,6 +17,8 @@ require "resources/sleep.php";
 require "resources/status.php";
 require "resources/user.php";
 require "resources/utils.php";
+//
+require "resources/log.php"; // Requires Model
 // Start
 Flight::start();
 ?>
