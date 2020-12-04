@@ -123,6 +123,11 @@ Flight::route("GET /api/users", function(){
       "email[~]" => $query["query"]
     ];
   }
+  if(!is_super()) {
+    $where["AND"] = [
+      "type[!]" => "super"
+    ];
+  }
   if(array_key_exists("start", $query) && array_key_exists("count", $query)) {
     $where["LIMIT"] = [$query["start"], $query["count"]];
   } else if (array_key_exists("count", $query)) {
@@ -176,7 +181,7 @@ Flight::route("PUT /api/user/@id", function($id){
   $data = $request->data->getData();
 
   if($id == $_SESSION["user"]["id"]) {
-    // Can't change type
+    // Can't change own type
     $data = denied_keys($data, ["type"]);
   }
 
