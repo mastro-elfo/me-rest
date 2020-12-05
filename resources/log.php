@@ -1,5 +1,5 @@
 <?php
-// TODO:
+
 // Define log model
 class Log extends Model {
   public function __construct() {
@@ -51,7 +51,7 @@ Flight::before("start", function(){
     "length" =>  $request->length,
     "query" =>  $request->query->getData(),
     "data" => $request->data->getData(),
-    "cookies" =>  $request->cookies,
+    "cookies" =>  $request->cookies->getData(),
     // "files" => ???
     "secure" =>  $request->secure,
     "accept" =>  $request->accept,
