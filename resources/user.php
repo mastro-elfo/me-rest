@@ -210,7 +210,6 @@ Flight::route("PUT /api/user/@id", function($id){
     $ret = $model->update($id, $data);
     $data = $model->read($id);
     $data = denied_keys($data, ["password"]);
-    $_SESSION["user"] = $data;
     Flight::json([
       "response" => $ret
     ]);
