@@ -12,7 +12,7 @@ $config = parse_ini_file("config.ini");
 // Require resources
 require_once "resources/api.php";
 require_once "resources/cors.php";
-require_once "resources/model.php";
+// require_once "resources/model.php";
 require_once "resources/sleep.php";
 require_once "resources/status.php";
 require_once "resources/user.php";

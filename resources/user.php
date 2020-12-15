@@ -1,5 +1,7 @@
 <?php
 
+require_once "resources/model.php";
+
 // Define user model
 class User extends Model {
   public function __construct() {
