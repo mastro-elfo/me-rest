@@ -1,6 +1,6 @@
 <?php
 
-// Adds Access-Control-Allow-Origin to response
+// Adds delay
 
 $delay =
   array_key_exists("delay", $config)
