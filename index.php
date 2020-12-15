@@ -10,13 +10,13 @@ require "vendor/autoload.php";
 // Load config file
 $config = parse_ini_file("config.ini");
 // Require resources
-require "resources/api.php";
-require "resources/cors.php";
-require "resources/model.php";
-require "resources/sleep.php";
-require "resources/status.php";
-require "resources/user.php";
-require "resources/utils.php";
+require_once "resources/api.php";
+require_once "resources/cors.php";
+require_once "resources/model.php";
+require_once "resources/sleep.php";
+require_once "resources/status.php";
+require_once "resources/user.php";
+require_once "resources/utils.php";
 //
 require "resources/log.php"; // Requires Model
 // Start
