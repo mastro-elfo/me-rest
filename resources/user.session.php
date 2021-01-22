@@ -17,4 +17,16 @@ function is_super() {
   return is_logged() && $_SESSION["user"]["type"] == "super";
 }
 
+// Set session variable
+function login($user) {
+  // TODO: check if $user is valid
+  $_SESSION["user"] = $user;
+  return TRUE;
+}
+
+// Delete session variable
+function logout() {
+  $_SESSION["user"] = NULL;
+}
+
 ?>
