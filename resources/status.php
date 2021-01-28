@@ -7,5 +7,3 @@ define("UNAUTHORIZED", 401);
 define("NOT_FOUND", 404);
 
 define("SERVICE_UNAVAILABLE", 503);
-
-?>

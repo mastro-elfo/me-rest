@@ -1,10 +1,8 @@
 <?php
 
-Flight::before("start", function(){
+Flight::before("start", function () {
   $delay = get_config("delay", 0);
-  if($delay) {
+  if ($delay) {
     sleep($delay);
   }
 });
-
-?>

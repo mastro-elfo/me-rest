@@ -4,9 +4,9 @@ require_once "resources/user.ns.php";
 require_once "resources/user.session.php";
 
 // Create new user
-Flight::route("POST /api/user", function(){
+Flight::route("POST /api/user", function () {
   // Check access
-  if(!is_admin()) {
+  if (!is_admin()) {
     return Flight::stop(UNAUTHORIZED);
   }
   //
@@ -15,7 +15,7 @@ Flight::route("POST /api/user", function(){
   // Query
   $id = User\create($request->data->getData())
   // Check last inserted id
-  if(!$id) {
+  if (!$id) {
     // Probably username or email duplicate
     return Flight::stop(BAD_REQUEST);
   }
@@ -24,15 +24,15 @@ Flight::route("POST /api/user", function(){
 });
 
 // Get user by id
-Flight::route("GET /api/user/@id", function($id){
+Flight::route("GET /api/user/@id", function ($id) {
   // Check access
-  if(!is_me() && !is_admin()) {
+  if (!is_me() && !is_admin()) {
     return Flight::stop(UNAUTHORIZED);
   }
   // Get user from db
   $data = $model->read($id);
   //
-  if(!$data) {
+  if (!$data) {
     // Not found
     return Flight::stop(NOT_FOUND);
   }
@@ -43,7 +43,7 @@ Flight::route("GET /api/user/@id", function($id){
 });
 
 // Update user data
-Flight::route("PUT /api/user/@id", function($id){
+Flight::route("PUT /api/user/@id", function ($id) {
   // // Check access
   // if(!is_logged()) {
   //   return Flight::stop(UNAUTHORIZED);
@@ -83,7 +83,7 @@ Flight::route("PUT /api/user/@id", function($id){
   // }
 });
 
-Flight::route("DELETE /api/user/@id", function(){
+Flight::route("DELETE /api/user/@id", function () {
   // // Check access
   // if(!is_logged()) {
   //   return Flight::stop(UNAUTHORIZED);
@@ -113,7 +113,7 @@ Flight::route("DELETE /api/user/@id", function(){
 });
 
 // List all users
-Flight::route("GET /api/users", function(){
+Flight::route("GET /api/users", function () {
   // // Check access
   // if(!is_admin()) {
   //   return Flight::stop(UNAUTHORIZED);
@@ -154,5 +154,3 @@ Flight::route("GET /api/users", function(){
   // // Response
   // Flight::json($list);
 });
-
-?>

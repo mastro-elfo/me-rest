@@ -2,7 +2,7 @@
 // Start session
 session_set_cookie_params([
   "SameSite" => "Strict",
-  "Secure" => "true"
+  "Secure"   => "true",
 ]);
 session_start();
 // Require libs
@@ -21,4 +21,3 @@ require_once "resources/user.php";
 require_once "resources/utils.php";
 // Start
 Flight::start();
-?>
