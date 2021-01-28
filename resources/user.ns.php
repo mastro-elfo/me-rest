@@ -1,20 +1,8 @@
 <?php
 
 namespace User {
-  function login(string $username, string $password): ?array {
-    return R::findOne("user", "username = ? AND password = ?", [
-      "username" => $username,
-      "password" => $password
-    ]);
-    // return [
-    //   "id" => 1,
-    //   "username" => "mastro-elfo",
-    //   "password" => "xxx",
-    //   "name"=> "Francesco"
-    // ];
-  }
-
-  function create(array $data): integer {
+  function create(array $data): integer
+  {
     // Filter allowed keys
     $keys = ["password", "username"];
     $data = allowed_keys($data, $keys);
@@ -29,12 +17,13 @@ namespace User {
     return R::store($user);
   }
 
-  function read(integer $id): ?object {
+  function read(integer $id):  ? object
+  {
     // Load user from db
     $user = R::load("user", $id);
     // If not found
-    if(!$user || $user->id == 0) {
-      return NULL;
+    if (!$user || $user->id == 0) {
+      return null;
     }
     // Filter denied keys
     $user = denied_keys($user, ["password"]);
@@ -42,7 +31,8 @@ namespace User {
     return $user;
   }
 
-  function update($id, $data) {
+  function update($id, $data)
+  {
     // Filter allowed keys
     $keys = ["password", "username"];
     $data = allowed_keys($data, $keys);
@@ -57,10 +47,24 @@ namespace User {
     return R::store($user);
   }
 
-  function delete($id) {
+  function delete($id)
+  {
     $user = R::loadForUpdate("user", $id);
     return R::trash($user);
   }
-}
 
-?>
+  function login(string $username, string $password) :  ? array
+  {
+    return R::findOne("user", "username = ? AND password = ?", [
+      "username" => $username,
+      "password" => $password,
+    ]);
+  }
+
+  function findAll(string $query, integer $limit = 10, integer $offset = 0) : array
+  {
+    return R::find("user", "username LIKE ? LIMIT $limit OFFSET $offset", [
+      $query, $limit, $offset,
+    ]);
+  }
+}
