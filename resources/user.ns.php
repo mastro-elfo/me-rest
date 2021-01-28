@@ -2,7 +2,10 @@
 
 namespace User {
   function login(string $username, string $password): ?array {
-    return NULL;
+    return R::findOne("user", "username = ? AND password = ?", [
+      "username" => $username,
+      "password" => $password
+    ]);
     // return [
     //   "id" => 1,
     //   "username" => "mastro-elfo",
@@ -55,7 +58,8 @@ namespace User {
   }
 
   function delete($id) {
-
+    $user = R::loadForUpdate("user", $id);
+    return R::trash($user);
   }
 }
 
