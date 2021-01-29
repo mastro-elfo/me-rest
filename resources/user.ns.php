@@ -1,7 +1,9 @@
 <?php
 
 namespace User {
-  function create(array $data): integer
+  require_once "lib/rb.php";
+
+  function create(array $data): int
   {
     // Filter allowed keys
     $keys = ["password", "username"];
@@ -10,21 +12,23 @@ namespace User {
     $maps = ["password" => "hide"];
     $data = apply_maps($data, $maps);
     // Create record
-    $user = R::dispense("user");
+    $user = \R::dispense("user");
     // Merge data into user
     array_like_merge($user, $data);
     // Save
-    return R::store($user);
+    return \R::store($user);
   }
 
   function read(integer $id):  ? object
   {
     // Load user from db
-    $user = R::load("user", $id);
+    $user = \R::load("user", $id);
     // If not found
     if (!$user || $user->id == 0) {
       return null;
     }
+    // Export
+    $user = $user->export();
     // Filter denied keys
     $user = denied_keys($user, ["password"]);
     // Return
@@ -40,30 +44,31 @@ namespace User {
     $maps = ["password" => "hide"];
     $data = apply_maps($data, $maps);
     // Load for update
-    $user = R::loadForUpdate("user", $id);
+    $user = \R::loadForUpdate("user", $id);
     // Merge data into user
     array_like_merge($user, $data);
     // Save
-    return R::store($user);
+    return \R::store($user);
   }
 
   function delete($id)
   {
-    $user = R::loadForUpdate("user", $id);
-    return R::trash($user);
+    $user = \R::loadForUpdate("user", $id);
+    return \R::trash($user);
   }
 
   function login(string $username, string $password) :  ? array
   {
-    return R::findOne("user", "username = ? AND password = ?", [
+    $user = \R::findOne("user", "username = :username AND password = :password", [
       "username" => $username,
       "password" => hide($password),
     ]);
+    return $user->export();
   }
 
   function findAll(string $query, $limit = 10, $offset = 0) : array
   {
-    return R::find("user", "username LIKE %?% LIMIT $limit OFFSET $offset", [
+    return \R::find("user", "username LIKE %?% LIMIT $limit OFFSET $offset", [
       $query, $limit, $offset,
     ]);
   }
