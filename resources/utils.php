@@ -2,7 +2,7 @@
 
 // Get a value from `global config` if it is defined
 // Otherwise get the default value
-function get_config(string $key, mixed $default): mixed
+function get_config(string $key, $default)
 {
   global $config;
   if (array_key_exists($key, $config)) {
@@ -22,18 +22,22 @@ function hide(string $value): string
 // Keeps only key/value pairs if key is not in `keys`
 function denied_keys(array $array, array $keys): array
 {
-  return array_diff_key($array, array_keys($keys));
+  // return array_diff_key($array, array_keys($keys));
+  return array_filter($array,
+    function($k) use($keys) {
+      return !in_array($k, $keys);
+    },
+    ARRAY_FILTER_USE_KEY);
 }
 
 // Keeps only key/value pairs if key is in `keys`
 function allowed_keys(array $array, array $keys): array
 {
-  return array_intersect_key($array, array_keys($keys));
-  // return array_filter($array,
-  //   function($k) use($keys) {
-  //     return in_array($k, $keys);
-  //   },
-  //   ARRAY_FILTER_USE_KEY);
+  return array_filter($array,
+    function($k) use($keys) {
+      return in_array($k, $keys);
+    },
+    ARRAY_FILTER_USE_KEY);
 }
 
 // Apply map function if key in `keys`
@@ -42,9 +46,8 @@ function allowed_keys(array $array, array $keys): array
 function apply_maps(array $array, array $keys): array
 {
   $mapped = [];
-  $kkeys  = array_keys($keys);
   foreach ($array as $key => $value) {
-    if (in_array($key, $kkeys)) {
+    if (array_key_exists($key, $keys)) {
       if (is_callable($keys[$key])) {
         $mapped[$key] = $keys[$key]($value);
       } else {
@@ -80,7 +83,7 @@ function array_every(array $array, callable $fn): bool
 }
 
 // Merge `$data` into an array like object
-function array_like_merge(object &$object, array $data): object
+function array_like_merge(object &$object, array $data)
 {
   foreach ($data as $key => $value) {
     $object[$key] = $value;
