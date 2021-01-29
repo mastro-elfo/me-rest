@@ -61,7 +61,7 @@ namespace User {
     ]);
   }
 
-  function findAll(string $query, integer $limit = 10, integer $offset = 0) : array
+  function findAll(string $query, $limit = 10, $offset = 0) : array
   {
     return R::find("user", "username LIKE %?% LIMIT $limit OFFSET $offset", [
       $query, $limit, $offset,
