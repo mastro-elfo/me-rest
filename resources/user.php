@@ -13,7 +13,7 @@ Flight::route("POST /api/user", function () {
   // Get request
   $request = Flight::request();
   // Query
-  $id = User\create($request->data->getData())
+  $id = User\create($request->data->getData());
   // Check last inserted id
   if (!$id) {
     // Probably username or email duplicate
