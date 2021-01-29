@@ -31,7 +31,7 @@ namespace User {
     return $user;
   }
 
-  function update($id, $data)
+  function update(integer $id, array $data)
   {
     // Filter allowed keys
     $keys = ["password", "username"];
