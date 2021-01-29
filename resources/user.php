@@ -122,7 +122,6 @@ Flight::route("GET /api/users", function () {
   // $model = new User();
   // $request = Flight::request();
   // $query = $request->query->getData();
-  // // file_put_contents('users', json_encode($query));
   // // Build where statement
   // $where = [];
   // if(array_key_exists("query", $query)) {
