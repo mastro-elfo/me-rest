@@ -10,7 +10,7 @@ Flight::route("POST /api/access/login", function () {
   $request = Flight::request();
   // Get username and password from request
   $username = $request->data->username;
-  $password = hide($request->data->password);
+  $password = $request->data->password;
   // Get user from username/password
   $user = User\login($username, $password);
   // Check login successful

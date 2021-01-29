@@ -57,7 +57,7 @@ namespace User {
   {
     return R::findOne("user", "username = ? AND password = ?", [
       "username" => $username,
-      "password" => $password,
+      "password" => hide($password),
     ]);
   }
 
