@@ -22,7 +22,7 @@ function create(array $data): int
     return R::store($user);
 }
 
-function read(integer $id):  ? array
+function read(int $id):  ? array
 {
     // Load from db
     $user = R::load("user", $id);
@@ -38,7 +38,7 @@ function read(integer $id):  ? array
     return $user;
 }
 
-function update(integer $id, array $data)
+function update(int $id, array $data)
 {
     // Filter allowed keys
     $keys = ["name", "password", "username"];
