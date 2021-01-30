@@ -83,10 +83,12 @@ function login(string $username, string $password) :  ? array
         ]);
     // Check valid user
     if ($user && $user["id"] != 0) {
+        // Export
+        $user = $user->export();
         // Filter denied keys
         $user = denied_keys($user, ["password"]);
         // User found, export result and return
-        return $user->export();
+        return $user;
     }
     // User not found: return null
     return null;
