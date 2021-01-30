@@ -35,8 +35,6 @@ Flight::route("GET /api/user/@id", function ($id) {
         // Not found
         return Flight::stop(NOT_FOUND);
     }
-    // Remove keys
-    $user = denied_keys($user, ["password"]);
     // Response
     Flight::json($user);
 });
