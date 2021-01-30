@@ -14,15 +14,15 @@ function create(array $data): int
     $data = apply_maps($data, $maps);
     // Create record
     $user = \R::dispense("user");
-    // Merge data into user
+    // Merge data
     array_like_merge($user, $data);
-    // Save
+    // Save and return
     return \R::store($user);
 }
 
-function read(integer $id):  ? object
+function read(integer $id):  ? array
 {
-    // Load user from db
+    // Load from db
     $user = \R::load("user", $id);
     // If not found
     if (!$user || $user->id == 0) {
