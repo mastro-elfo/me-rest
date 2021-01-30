@@ -5,151 +5,95 @@ require_once "resources/user.session.php";
 
 // Create new user
 Flight::route("POST /api/user", function () {
-  // Check access
-  if (!is_admin()) {
-    return Flight::stop(UNAUTHORIZED);
-  }
-  //
-  // Get request
-  $request = Flight::request();
-  // Query
-  $id = User\create($request->data->getData());
-  // Check last inserted id
-  if (!$id) {
-    // Probably username or email duplicate
-    return Flight::stop(BAD_REQUEST);
-  }
-  // Response
-  Flight::json(["id" => $id]);
+    // Check access
+    if (!is_admin()) {
+        return Flight::stop(UNAUTHORIZED);
+    }
+    // Get request
+    $request = Flight::request();
+    // Query
+    $id = User\create($request->data->getData());
+    // Check last inserted id
+    if (!$id) {
+        // Probably username or email duplicate
+        return Flight::stop(BAD_REQUEST);
+    }
+    // Response
+    Flight::json(["id" => $id]);
 });
 
 // Get user by id
 Flight::route("GET /api/user/@id", function ($id) {
-  // Check access
-  if (!is_me() && !is_admin()) {
-    return Flight::stop(UNAUTHORIZED);
-  }
-  // Get user from db
-  $data = $model->read($id);
-  //
-  if (!$data) {
-    // Not found
-    return Flight::stop(NOT_FOUND);
-  }
-  // Remove keys
-  $data = denied_keys($data, ["password"]);
-  // Response
-  Flight::json($data);
+    // Check access
+    if (!is_me() && !is_admin()) {
+        return Flight::stop(UNAUTHORIZED);
+    }
+    // Get user from db
+    $user = User\read($id);
+    // User not found
+    if (!$data) {
+        // Not found
+        return Flight::stop(NOT_FOUND);
+    }
+    // Remove keys
+    $user = denied_keys($user, ["password"]);
+    // Response
+    Flight::json($user);
 });
 
 // Update user data
 Flight::route("PUT /api/user/@id", function ($id) {
-  // // Check access
-  // if(!is_logged()) {
-  //   return Flight::stop(UNAUTHORIZED);
-  // }
-  // // Check access
-  // if($id != $_SESSION["user"]["id"] && !is_admin()) {
-  //   return Flight::stop(UNAUTHORIZED);
-  // }
-  //
-  // $model = new User();
-  // $request = Flight::request();
-  // // A super user can be edited only by super users
-  // if(!is_super()) {
-  //   $model_data = $model->read($id);
-  //   if(!$model_data || $model_data["type"] == "super") {
-  //     return Flight::stop(NOT_FOUND);
-  //   }
-  // }
-  // // Get request data
-  // $data = $request->data->getData();
-  // //
-  // if($id == $_SESSION["user"]["id"]) {
-  //   // Can't change own type
-  //   $data = denied_keys($data, ["type"]);
-  // }
-  // // If $data is empty $model->update gives error
-  // if(count($data) > 0) {
-  //   $ret = $model->update($id, $data);
-  //   $data = $model->read($id);
-  //   $data = denied_keys($data, ["password"]);
-  //   Flight::json([
-  //     "response" => $ret
-  //   ]);
-  // } else {
-  //   // Nothing to update
-  //   Flight::json(["response" => 0]);
-  // }
+    // Check access
+    if (!is_admin()) {
+        return Flight::stop(UNAUTHORIZED);
+    }
+    // Get request data
+    $request = Flight::request();
+    $data    = $request->data->getData();
+    // Update
+    $response = User\update($id, $data);
+    // Can't update user
+    if (!$response) {
+        return Flight::stop(BAD_REQUEST);
+    }
+    // Response
+    Flight::json([]);
 });
 
 Flight::route("DELETE /api/user/@id", function () {
-  // // Check access
-  // if(!is_logged()) {
-  //   return Flight::stop(UNAUTHORIZED);
-  // }
-  // // Check access
-  // if($id != $_SESSION["user"]["id"] && !is_admin()) {
-  //   return Flight::stop(UNAUTHORIZED);
-  // }
-  // //
-  // $model = new User();
-  // $request = Flight::request();
-  // // A super user can be edited only by super users
-  // if(!is_super()) {
-  //   $model_data = $model->read($id);
-  //   if(!$model_data || $model_data["type"] == "super") {
-  //     return Flight::stop(NOT_FOUND);
-  //   }
-  // }
-  // // Query
-  // $ret = $model->delete($id);
-  // // Log user out
-  // $_SESSION["user"] = null;
-  // // Response
-  // Flight::json([
-  //   "response" => $ret
-  // ]);
+    // Check access
+    if (!is_admin()) {
+        return Flight::stop(UNAUTHORIZED);
+    }
+    // Delete user
+    $response = User\delete($id);
+    // Can't delete user
+    if (!$response) {
+        Flight::stop(BAD_REQUEST);
+    }
+    // Response
+    Flight::json([]);
 });
 
 // List all users
 Flight::route("GET /api/users", function () {
-  // // Check access
-  // if(!is_admin()) {
-  //   return Flight::stop(UNAUTHORIZED);
-  // }
-  // //
-  // $model = new User();
-  // $request = Flight::request();
-  // $query = $request->query->getData();
-  // // Build where statement
-  // $where = [];
-  // if(array_key_exists("query", $query)) {
-  //   $where["OR"] = [
-  //     "username[~]" => $query["query"],
-  //     "name[~]" => $query["query"],
-  //     "surname[~]" => $query["query"],
-  //     "email[~]" => $query["query"]
-  //   ];
-  // }
-  // // Don't show super users if logged user is less then super
-  // if(!is_super()) {
-  //   $where["AND"] = [
-  //     "type[!]" => "super"
-  //   ];
-  // }
-  // // Limit part
-  // if(array_key_exists("start", $query) && array_key_exists("count", $query)) {
-  //   $where["LIMIT"] = [$query["start"], $query["count"]];
-  // } else if (array_key_exists("count", $query)) {
-  //   $where["LIMIT"] = $query["count"];
-  // }
-  // // Query db
-  // $list = $model->select($where);
-  // // Remove password
-  // $list = array_map(function($item){
-  //   return denied_keys($item, ["password"]);
-  // }, $list);
-  // // Response
-  // Flight::json($list);
+    // // Check access
+    if (!UserSession\is_admin()) {
+        return Flight::stop(UNAUTHORIZED);
+    }
+    // Get query params
+    $request = Flight::request();
+    $params  = $request->query->getData();
+    // Empty query give nothing
+    if (!array_key_exists("query", $params)) {
+        return Flight::json([]);
+    }
+    // Find all
+    $users = User\findAll(
+        $params["query"],
+        array_key_exists("offset", $params) ? $params["offset"] : 0,
+        array_key_exists("limit", $params) ? $params["limit"] : 100,
+        UserSession\is_super());
+    // Return
+    Flight::json($users);
 });

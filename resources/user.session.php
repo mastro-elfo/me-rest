@@ -1,6 +1,6 @@
 <?php
 
-namespace User\Session {
+namespace UserSession {
   // Check if user is logged
   function is_logged(): bool
   {

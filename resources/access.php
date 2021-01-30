@@ -18,10 +18,8 @@ Flight::route("POST /api/access/login", function () {
     // Not found
     return Flight::stop(NOT_FOUND);
   }
-  // Remove denied keys
-  $user = denied_keys($user, ["password"]);
   // Set session data
-  User\Session\login($user);
+  UserSession\login($user);
   // Response
   Flight::json($user);
 });
@@ -29,14 +27,14 @@ Flight::route("POST /api/access/login", function () {
 // Log user out
 Flight::route("POST /api/access/logout", function () {
   // Just delete session
-  User\Session\logout();
+  UserSession\logout();
   Flight::json([]);
 });
 
 // Logged user
 Flight::route("GET /api/access/user", function () {
   // Get logged user from session
-  $user = User\Session\logged_user();
+  $user = UserSession\logged_user();
   // Check access
   if (!$user) {
     // Not found
