@@ -4,20 +4,23 @@ namespace Log;
 require_once "lib/rb.php";
 require_once "resources/user.session.php";
 
+use \Flight;
+use \R;
+
 function create(array $data): int
 {
     // Create record
-    $log = \R::dispense("log");
+    $log = R::dispense("querylog");
     // Merge data
     array_like_merge($log, $data);
     // Save and return
-    return \R::store($log);
+    return R::store($log);
 }
 
 function read(integer $id)
 {
     // Load from db
-    $log = \R::load("log", $id);
+    $log = R::load("log", $id);
     // If not found
     if (!$log || $log->id == 0) {
         return null;
@@ -32,7 +35,7 @@ function read(integer $id)
 function findAll($offset = 0): array
 {
     // Query db
-    $logs = \R::findAndExport("log",
+    $logs = R::findAndExport("log",
         implode(" ", [
             "LIMIT :offset, 10",
         ]), [
