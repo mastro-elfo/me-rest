@@ -19,6 +19,7 @@ require_once "resources/log.php";
 require_once "resources/sleep.php";
 require_once "resources/status.php";
 require_once "resources/user.php";
+require_once "resources/user.profile.php";
 require_once "resources/utils.php";
 // Start
 Flight::start();
