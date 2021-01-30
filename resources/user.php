@@ -6,7 +6,7 @@ require_once "resources/user.session.php";
 // Create new user
 Flight::route("POST /api/user", function () {
     // Check access
-    if (!is_admin()) {
+    if (!\UserSession\is_admin()) {
         return Flight::stop(UNAUTHORIZED);
     }
     // Get request
@@ -25,13 +25,13 @@ Flight::route("POST /api/user", function () {
 // Get user by id
 Flight::route("GET /api/user/@id", function ($id) {
     // Check access
-    if (!is_me() && !is_admin()) {
+    if (!\UserSession\is_admin()) {
         return Flight::stop(UNAUTHORIZED);
     }
     // Get user from db
-    $user = User\read($id);
+    $user = User\read((integer) $id);
     // User not found
-    if (!$data) {
+    if (!$user) {
         // Not found
         return Flight::stop(NOT_FOUND);
     }
@@ -44,7 +44,7 @@ Flight::route("GET /api/user/@id", function ($id) {
 // Update user data
 Flight::route("PUT /api/user/@id", function ($id) {
     // Check access
-    if (!is_admin()) {
+    if (!\UserSession\is_admin()) {
         return Flight::stop(UNAUTHORIZED);
     }
     // Get request data
@@ -62,7 +62,7 @@ Flight::route("PUT /api/user/@id", function ($id) {
 
 Flight::route("DELETE /api/user/@id", function () {
     // Check access
-    if (!is_admin()) {
+    if (!\UserSession\is_admin()) {
         return Flight::stop(UNAUTHORIZED);
     }
     // Delete user
