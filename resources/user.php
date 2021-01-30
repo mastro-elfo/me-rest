@@ -3,6 +3,23 @@
 require_once "resources/user.ns.php";
 require_once "resources/user.session.php";
 
+// Get user by id
+Flight::route("GET /api/user/@id", function ($id) {
+    // Check access
+    if (!\UserSession\is_admin()) {
+        return Flight::stop(UNAUTHORIZED);
+    }
+    // Get user from db
+    $user = User\read((integer) $id);
+    // User not found
+    if (!$user) {
+        // Not found
+        return Flight::stop(NOT_FOUND);
+    }
+    // Response
+    Flight::json($user);
+});
+
 // Create new user
 Flight::route("POST /api/user", function () {
     // Check access
@@ -20,23 +37,6 @@ Flight::route("POST /api/user", function () {
     }
     // Response
     Flight::json(["id" => $id]);
-});
-
-// Get user by id
-Flight::route("GET /api/user/@id", function ($id) {
-    // Check access
-    if (!\UserSession\is_admin()) {
-        return Flight::stop(UNAUTHORIZED);
-    }
-    // Get user from db
-    $user = User\read((integer) $id);
-    // User not found
-    if (!$user) {
-        // Not found
-        return Flight::stop(NOT_FOUND);
-    }
-    // Response
-    Flight::json($user);
 });
 
 // Update user data
