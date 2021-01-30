@@ -4,6 +4,8 @@ namespace User;
 
 require_once "lib/rb.php";
 
+use \R;
+
 function create(array $data): int
 {
     // Filter allowed keys
@@ -13,17 +15,17 @@ function create(array $data): int
     $maps = ["password" => "hide"];
     $data = apply_maps($data, $maps);
     // Create record
-    $user = \R::dispense("user");
+    $user = R::dispense("user");
     // Merge data
     array_like_merge($user, $data);
     // Save and return
-    return \R::store($user);
+    return R::store($user);
 }
 
 function read(integer $id):  ? array
 {
     // Load from db
-    $user = \R::load("user", $id);
+    $user = R::load("user", $id);
     // If not found
     if (!$user || $user->id == 0) {
         return null;
@@ -45,7 +47,7 @@ function update(integer $id, array $data)
     $maps = ["password" => "hide"];
     $data = apply_maps($data, $maps);
     // Load for update
-    $user = \R::loadForUpdate("user", $id);
+    $user = R::loadForUpdate("user", $id);
     // Can't update super user
     if ($user["type"] == "super") {
         return false;
@@ -53,7 +55,7 @@ function update(integer $id, array $data)
     // Merge data into user
     array_like_merge($user, $data);
     // Save
-    return \R::store($user);
+    return R::store($user);
 }
 
 // Delete from db
@@ -61,20 +63,20 @@ function update(integer $id, array $data)
 function delete($id)
 {
     // Lock row for update
-    $user = \R::loadForUpdate("user", $id);
+    $user = R::loadForUpdate("user", $id);
     // Can't delete super user
     if ($user["type"] == "super") {
         return false;
     }
     // Remove
-    \R::trash($user);
+    R::trash($user);
     return true;
 }
 
 function login(string $username, string $password) :  ? array
 {
     // Query db
-    $user = \R::findOne("user",
+    $user = R::findOne("user",
         "username = :username AND password = :password", [
             "username" => $username,
             "password" => hide($password),
@@ -95,7 +97,7 @@ function findAll(
     $super = false) : array
 {
     // Query db
-    $users = \R::findAndExport("user",
+    $users = R::findAndExport("user",
         implode(" ", [
             "username LIKE :query",
             "LIMIT :offset, :limit",
