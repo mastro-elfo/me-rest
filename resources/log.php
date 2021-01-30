@@ -1,4 +1,5 @@
 <?php
+
 namespace Log;
 
 require_once "lib/rb.php";
@@ -10,7 +11,13 @@ use \R;
 function create(array $data): int
 {
     // Create record
-    $log = R::dispense("querylog");
+    $log = R::dispense("log");
+    // Map data
+    $data = apply_maps($data, [
+        "user"    => "json_encode",
+        "query"   => "json_encode",
+        "cookies" => "json_encode",
+    ]);
     // Merge data
     array_like_merge($log, $data);
     // Save and return
