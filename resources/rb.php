@@ -9,6 +9,6 @@ Flight::before("start", function () {
   $setup = get_config("RBSetup", "");
   R::setup($setup);
   // RedBeanPHP frozen: https://www.redbeanphp.com/index.php?p=/fluid_and_frozen
-  $frozen = get_config("RBFrozen", false);
+  $frozen = get_config("RBFrozen", true);
   R::freeze($frozen);
 });
