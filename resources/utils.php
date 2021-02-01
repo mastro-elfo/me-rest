@@ -22,7 +22,6 @@ function hide(string $value): string
 // Keeps only key/value pairs if key is not in `keys`
 function denied_keys(array $array, array $keys): array
 {
-    // return array_diff_key($array, array_keys($keys));
     return array_filter($array,
         function ($k) use ($keys) {
             return !in_array($k, $keys);
