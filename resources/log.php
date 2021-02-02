@@ -8,6 +8,7 @@ require_once "resources/user.session.php";
 use \Flight;
 use \R;
 
+// Create new log
 function create(array $data): int
 {
     // Create record
@@ -24,6 +25,7 @@ function create(array $data): int
     return R::store($log);
 }
 
+// Read log by id
 function read(integer $id)
 {
     // Load from db
@@ -32,13 +34,13 @@ function read(integer $id)
     if (!$log || $log->id == 0) {
         return null;
     }
-
     // Export
     $log = $log->export();
     // Return
     return $log;
 }
 
+// Find all logs
 function findAll($offset = 0): array
 {
     // Query db
@@ -52,6 +54,7 @@ function findAll($offset = 0): array
     return $logs;
 }
 
+// Log request
 Flight::before("start", function () {
     $log = get_config("log", true);
     // This stops the function but not the next "before"
@@ -88,7 +91,8 @@ Flight::before("start", function () {
         "host"       => $request->host,
     ]);
 });
-//
+
+// Get all logs
 Flight::route("GET /api/logs", function () {
     // Check access
     if (!is_admin()) {
