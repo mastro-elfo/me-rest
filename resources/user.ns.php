@@ -3,6 +3,7 @@
 namespace User;
 
 require_once "lib/rb.php";
+require_once "resources/user.session.php";
 
 use \R;
 
@@ -11,10 +12,18 @@ function create(array $data): int
     // Create record
     $user = R::dispense("user");
     // Filter allowed keys
-    $keys = ["name", "password", "username"];
+    $keys = ["email", "name", "password","surname","username"];
     $data = allowed_keys($data, $keys);
     // Map data
-    $maps = ["password" => "hide"];
+    $maps = [
+        "password" => "hide",
+        // Only a super can create a super
+        "type"     => function ($v) use ($user) {
+            return ($v == "super" && !\UserSession\is_super())
+            ? $user["type"]
+            : $v;
+        },
+    ];
     $data = apply_maps($data, $maps);
     // Apply default values
     $data["type"] = "user";
@@ -44,19 +53,21 @@ function update(int $id, array $data)
 {
     // Load for update
     $user = R::loadForUpdate("user", $id);
-    // Can't update super user
-    if ($user["type"] == "super") {
+    // Only a super can update a super
+    if ($user["type"] == "super" && !\UserSession\is_super()) {
         return false;
     }
     // Filter allowed keys
-    $keys = ["name", "password", "type", "username"];
+    $keys = ["email", "name", "password", "surname","type", "username"];
     $data = allowed_keys($data, $keys);
     // Map data
     $maps = [
         "password" => "hide",
-        // Don't allow type to become super
+        // Only a super can create a super
         "type"     => function ($v) use ($user) {
-            return $v == "super" ? $user["type"] : $v;
+            return ($v == "super" && !\UserSession\is_super())
+            ? $user["type"]
+            : $v;
         },
     ];
     $data = apply_maps($data, $maps);
@@ -73,7 +84,7 @@ function delete($id)
     // Lock row for update
     $user = R::loadForUpdate("user", $id);
     // Can't delete super user
-    if ($user["type"] == "super") {
+    if ($user["type"] == "super" && !\UserSession\is_super()) {
         return false;
     }
     // Remove
@@ -115,7 +126,8 @@ function findAll(
                     "username LIKE :query",
                     "name LIKE :query",
                 ]),
-                "type != 'super'",
+                // Only super can search a super
+                !\UserSession\is_super() ? "type != 'super'" : "1",
             ]),
             "LIMIT :offset, :limit",
         ]), [

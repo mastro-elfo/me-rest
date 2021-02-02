@@ -52,6 +52,8 @@ Flight::route("PUT /api/profile", function () {
     if (!$response) {
         return Flight::stop(BAD_REQUEST);
     }
+    // Set session data
+    UserSession\login($user);
     // Response
     Flight::json([]);
 });
@@ -71,6 +73,8 @@ Flight::route("DELETE /api/profile", function () {
     if (!$response) {
         Flight::stop(BAD_REQUEST);
     }
+    // Also log out
+    UserSession\logout();
     // Response
     Flight::json([]);
 });
