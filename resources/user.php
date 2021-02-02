@@ -90,8 +90,8 @@ Flight::route("GET /api/users", function () {
     $users = User\findAll(
         $params["query"],
         array_key_exists("offset", $params) ? $params["offset"] : 0,
-        array_key_exists("limit", $params) ? $params["limit"] : 100,
-        UserSession\is_super());
+        array_key_exists("limit", $params) ? $params["limit"] : 100);
+
     // Return
     Flight::json($users);
 });

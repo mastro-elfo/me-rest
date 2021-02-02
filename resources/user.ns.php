@@ -8,14 +8,16 @@ use \R;
 
 function create(array $data): int
 {
+    // Create record
+    $user = R::dispense("user");
     // Filter allowed keys
-    $keys = ["password", "username"];
+    $keys = ["name", "password", "username"];
     $data = allowed_keys($data, $keys);
     // Map data
     $maps = ["password" => "hide"];
     $data = apply_maps($data, $maps);
-    // Create record
-    $user = R::dispense("user");
+    // Apply default values
+    $data["type"] = "user";
     // Merge data
     array_like_merge($user, $data);
     // Save and return
@@ -40,18 +42,24 @@ function read(int $id):  ? array
 
 function update(int $id, array $data)
 {
-    // Filter allowed keys
-    $keys = ["name", "password", "username"];
-    $data = allowed_keys($data, $keys);
-    // Map data
-    $maps = ["password" => "hide"];
-    $data = apply_maps($data, $maps);
     // Load for update
     $user = R::loadForUpdate("user", $id);
     // Can't update super user
     if ($user["type"] == "super") {
         return false;
     }
+    // Filter allowed keys
+    $keys = ["name", "password", "type", "username"];
+    $data = allowed_keys($data, $keys);
+    // Map data
+    $maps = [
+        "password" => "hide",
+        // Don't allow type to become super
+        "type"     => function ($v) use ($user) {
+            return $v == "super" ? $user["type"] : $v;
+        },
+    ];
+    $data = apply_maps($data, $maps);
     // Merge data into user
     array_like_merge($user, $data);
     // Save
@@ -97,13 +105,18 @@ function login(string $username, string $password) :  ? array
 function findAll(
     string $query,
     $offset = 0,
-    $limit = 10,
-    $super = false) : array
+    $limit = 10) : array
 {
     // Query db
     $users = R::findAndExport("user",
         implode(" ", [
-            "username LIKE :query",
+            group_join("AND", [
+                group_join("OR", [
+                    "username LIKE :query",
+                    "name LIKE :query",
+                ]),
+                "type != 'super'",
+            ]),
             "LIMIT :offset, :limit",
         ]), [
             "query"  => "%$query%",
@@ -113,8 +126,7 @@ function findAll(
     // Map results
     $users = array_map(function ($user) {
         // Remove denied keys
-        $user = denied_keys($user, ["password"]);
-        return $user;
+        return denied_keys($user, ["password"]);
     }, $users);
     // Return
     return $users;
