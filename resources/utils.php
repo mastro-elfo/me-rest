@@ -88,3 +88,9 @@ function array_like_merge(object &$object, array $data)
         $object[$key] = $value;
     }
 }
+
+// Put parentheses around each piece, then glue
+function group_join($glue = " ", $pieces = []): string
+{
+    return "(" . implode(")$glue(", $pieces) . ")";
+}
