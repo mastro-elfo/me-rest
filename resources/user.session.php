@@ -39,6 +39,7 @@ function login(array $user): bool
 function logout()
 {
     $_SESSION["user"] = null;
+    session_destroy();
 }
 
 // Get logged user
