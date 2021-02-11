@@ -21,5 +21,7 @@ require_once "resources/status.php";
 require_once "resources/user.php";
 require_once "resources/user.profile.php";
 require_once "resources/utils.php";
+// Load project routes
+require_once "resources/routes.php";
 // Start
 Flight::start();
