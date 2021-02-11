@@ -1,8 +1,8 @@
 <?php
 // Start session
 session_set_cookie_params([
-    "SameSite" => "Strict",
-    "Secure"   => "true",
+	"SameSite" => "Strict",
+	"Secure" => "true",
 ]);
 session_start();
 // Require libs
